@@ -177,13 +177,13 @@ import {
                   state.incrementPermanentSpeedBonus();
               } else if (coin.type === COIN_TYPES.BLUE) {
                   state.incrementJumpVelocityBonus();
-              } else if (coin.type === COIN_TYPES.YELLOW) {
-                  state.grantPowerUp(COIN_TYPES.YELLOW);
               } else if (coin.type === COIN_TYPES.VIOLET) {
                   state.grantPowerUp(COIN_TYPES.VIOLET);
+              } else if (coin.type === COIN_TYPES.YELLOW) {
                   state.grantPowerUp(COIN_TYPES.YELLOW);
               } else if (coin.type === COIN_TYPES.WHITE) {
-                  state.enableUnlimitedMode();
+                  state.grantPowerUp(COIN_TYPES.VIOLET);
+                  state.grantPowerUp(COIN_TYPES.YELLOW);
               }
               // audioManager.playSound(`coin${coin.type.charAt(0).toUpperCase() + coin.type.slice(1)}`);
           });
