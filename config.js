@@ -76,17 +76,17 @@ export const COIN_TYPES = Object.freeze({
   // Define qué se necesita para pasar AL SIGUIENTE nivel desde el nivel actual
   // y qué moneda aparece MIENTRAS estás en el nivel actual.
   export const LEVEL_RULES = [
-    // Nivel 0 (Cian): necesitas 3 Verdes para pasar a Lvl 1. Aparecen Verdes.
+    // Nivel 0: aparecen 3 verdes que otorgan velocidad.
     { level: 0, spawn: COIN_TYPES.GREEN,  coinsToAdvance: 3, advanceCoin: COIN_TYPES.GREEN },
-    // Nivel 1 (Verde): necesitas 3 Azules para pasar a Lvl 2. Aparecen Azules.
+    // Nivel 1: aparecen 3 azules que otorgan salto.
     { level: 1, spawn: COIN_TYPES.BLUE,   coinsToAdvance: 3, advanceCoin: COIN_TYPES.BLUE  },
-    // Nivel 2 (Azul): necesitas 2 Amarillas para Lvl 3. Aparecen Amarillas. (Desbloquea DOBLE SALTO)
-    { level: 2, spawn: COIN_TYPES.YELLOW, coinsToAdvance: 2, advanceCoin: COIN_TYPES.YELLOW },
-    // Nivel 3 (Amarillo): necesitas 2 Violetas para Lvl 4. Aparecen Violetas. (Desbloquea DASH)
-    { level: 3, spawn: COIN_TYPES.VIOLET, coinsToAdvance: 2, advanceCoin: COIN_TYPES.VIOLET },
-    // Nivel 4 (Violeta): necesitas 2 Blancas para Lvl 5. Aparecen Blancas. (Desbloquea DASH AÉREO con Espacio)
-    { level: 4, spawn: COIN_TYPES.WHITE,  coinsToAdvance: 2, advanceCoin: COIN_TYPES.WHITE  },
-    // Nivel 5 (Blanco): nivel final. Siempre aparecen Blancas.
+    // Nivel 2: aparecen 3 violetas que otorgan un dash consumible.
+    { level: 2, spawn: COIN_TYPES.VIOLET, coinsToAdvance: 3, advanceCoin: COIN_TYPES.VIOLET },
+    // Nivel 3: aparecen 3 amarillas que otorgan doble salto consumible.
+    { level: 3, spawn: COIN_TYPES.YELLOW, coinsToAdvance: 3, advanceCoin: COIN_TYPES.YELLOW },
+    // Nivel 4: aparecen 3 blancas que otorgan dash y doble salto simultáneos.
+    { level: 4, spawn: COIN_TYPES.WHITE,  coinsToAdvance: 3, advanceCoin: COIN_TYPES.WHITE  },
+    // Nivel 5: nivel final, siguen apareciendo blancas indefinidamente.
     { level: 5, spawn: COIN_TYPES.WHITE,  coinsToAdvance: Infinity }
   ];
   
