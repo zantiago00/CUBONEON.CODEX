@@ -65,8 +65,9 @@ export function scheduleNextObstacle(gameRunning, currentSpeed, currentCombo) {
   const visualGapTime = (MIN_OBSTACLE_VISUAL_GAP_PX / currentSpeed) * 1000; //
   const minGap = visualGapTime + OBSTACLE_MIN_GAP_TIME_MS; //
 
+  const rateMod = state.getObstacleRateModifier ? state.getObstacleRateModifier() : 1;
   const timeSinceLast = now - lastObstacleSpawnTime;
-  const delay = Math.max(minGap, baseInterval - timeSinceLast);
+  const delay = Math.max(minGap, (baseInterval * rateMod) - timeSinceLast);
 
   obstacleTimeoutId = setTimeout(() => {
     _spawnAndReschedule(gameRunning, currentSpeed, currentCombo);

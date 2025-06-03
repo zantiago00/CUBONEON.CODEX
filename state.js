@@ -3,7 +3,7 @@
 // Versión: Power-Ups con Enum + Telemetría + Estado de Sonido y Dash
 
 /* ---------- Importaciones ---------- */
-import { COIN_TYPES } from './config.js'; //
+import { COIN_TYPES, GREEN_SPEED_INCREMENT, BLUE_JUMP_INCREMENT, WHITE_OBSTACLE_RATE_MOD } from './config.js';
 
 /* ---------- Variables de estado internas ---------- */
 
@@ -38,6 +38,12 @@ let dashEffectEndTime = 0; // Para que gameLoop sepa cuándo termina el efecto d
 
 // NUEVO: Estado del Sonido
 let soundMuted = false; // Podría cargarse desde localStorage para persistencia
+
+// Bonus permanentes y modo ilimitado
+let permanentSpeedBonus = 0;
+let jumpVelocityBonus = 0;
+let unlimitedMode = false;
+let obstacleRateModifier = 1;
 
 //--------------------------------------------------
 // Power-Ups de un solo uso activados por moneda
@@ -253,6 +259,32 @@ export function toggleSoundMuted() {
     return soundMuted; // Devolver el nuevo estado
 }
 
+/* ---------- Bonus permanentes y modo ilimitado ---------- */
+export const getPermanentSpeedBonus = () => permanentSpeedBonus;
+export const getJumpVelocityBonus  = () => jumpVelocityBonus;
+export const getObstacleRateModifier = () => obstacleRateModifier;
+export const isUnlimitedMode = () => unlimitedMode;
+
+export function incrementPermanentSpeedBonus(amount = GREEN_SPEED_INCREMENT) {
+    permanentSpeedBonus += amount;
+}
+
+export function incrementJumpVelocityBonus(amount = BLUE_JUMP_INCREMENT) {
+    jumpVelocityBonus += amount;
+}
+
+export function enableUnlimitedMode() {
+    unlimitedMode = true;
+    obstacleRateModifier = WHITE_OBSTACLE_RATE_MOD;
+}
+
+export function resetBonuses() {
+    permanentSpeedBonus = 0;
+    jumpVelocityBonus = 0;
+    unlimitedMode = false;
+    obstacleRateModifier = 1;
+}
+
 
 /* ---------- Inicialización Completa del Estado ---------- */
 export function initializeState(initialTime) {
@@ -265,6 +297,7 @@ export function initializeState(initialTime) {
   resetAllPowerUps();
   setBoostActive(false);
   setPlayerDashingState(false); // Resetear estado del Dash
+  resetBonuses();
 
   // Cargar preferencia de sonido desde localStorage al inicializar (opcional)
   try {
