@@ -26,6 +26,7 @@ let playerIsAirborne = false;
 let doubleJumpAvailable = true; // Indica si el próximo salto en el aire puede ser un doble salto
 let jumpPressCount = 0;         // Rastrea las pulsaciones consecutivas de salto
 let isDashing = false;          // << NUEVO: Flag para el estado de Dash
+let ultimaPulsacionSalto = 0;    // Momento de la última pulsación de salto
 
 /** Inicializa o resetea el estado del jugador para una nueva partida. */
 export function initPlayerState() {
@@ -67,6 +68,28 @@ export function updatePlayerPhysics(deltaTime) {
         }
     }
     player.style.bottom = `${playerY}px`;
+}
+
+const VENTANA_DOBLE_TAP_MS = 250; // Tiempo máximo entre pulsaciones para doble tap
+
+/** Maneja la pulsación de espacio para salto o dash. */
+export function manejarPulsacionEspacio(isGameRunning) {
+    const ahora = Date.now();
+    const esDobleTap = (ahora - ultimaPulsacionSalto) <= VENTANA_DOBLE_TAP_MS;
+    ultimaPulsacionSalto = ahora;
+
+    if (esDobleTap && playerIsAirborne) {
+        if (_puedeUsarDash()) {
+            activateDash(COIN_TYPES.VIOLET);
+            return;
+        }
+    }
+    jump(isGameRunning);
+}
+
+function _puedeUsarDash() {
+    if (isDashing) return false;
+    return state.isUnlimitedMode() || state.hasPowerUp(COIN_TYPES.VIOLET);
 }
 
 /**
