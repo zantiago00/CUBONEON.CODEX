@@ -187,6 +187,7 @@ import {
         console.log("GameLoop: Reseteando estado por golpe con obstáculo.");
         state.resetCombo(); //
         state.setBoostActive(false); //
+        state.resetCoinCount(); // << NUEVO: Reiniciar todas las monedas recogidas
         state.setLevel(0); //
         state.resetAllPowerUps(); //
         obstaclesDodgedSinceLastHit = 0; // Resetear contador de esquivados
