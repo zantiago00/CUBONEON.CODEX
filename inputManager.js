@@ -37,8 +37,10 @@ export function initInputListeners() {
         // Activar Dash con tecla 'D'
         else if (gameIsRunning && (e.code === 'KeyD' || e.key === 'd')) {
             e.preventDefault();
-            if (state.hasPowerUp(COIN_TYPES.VIOLET)) { //
-                playerController.activateDash(); //
+            if (state.hasPowerUp(COIN_TYPES.VIOLET)) {
+                playerController.activateDash(COIN_TYPES.VIOLET);
+            } else if (state.hasPowerUp(COIN_TYPES.WHITE)) {
+                playerController.activateDash(COIN_TYPES.WHITE);
             }
         }
         // Activar Combo Aéreo con tecla 'C' (ejemplo)

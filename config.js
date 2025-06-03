@@ -32,7 +32,9 @@ export const COIN_TYPES = Object.freeze({
   /* --- Multiplicadores PERMANENTES por Nivel (0 a 5) --- */
   // Estos se aplican sobre la BASE_SPEED y INITIAL_JUMP_VELOCITY según el nivel.
   export const LEVEL_SPEED_MULTIPLIERS = [1.0, 1.15, 1.30, 1.45, 1.60, 1.75]; // Ejemplo: Aumentos progresivos
-  export const LEVEL_JUMP_MULTIPLIERS  = [1.0, 1.0,  1.1,  1.1,  1.2,  1.2];  // Ejemplo: Salto mejora en ciertos niveles
+  // Multiplicadores de salto por nivel. El power‑up verde otorga un ligero
+  // aumento de altura; el resto de niveles mantienen la altura base.
+  export const LEVEL_JUMP_MULTIPLIERS  = [1.0, 1.05, 1.0, 1.0, 1.0, 1.0];
   
   /* ---------- Tiempo, puntuación, ranking ---------- */
   export const INITIAL_TIME_S   = 120; // Tiempo inicial en segundos
@@ -73,18 +75,18 @@ export const COIN_TYPES = Object.freeze({
   // Define qué se necesita para pasar AL SIGUIENTE nivel desde el nivel actual
   // y qué moneda aparece MIENTRAS estás en el nivel actual.
   export const LEVEL_RULES = [
-    // Nivel 0 (Cian): Necesitas 3 Verdes para pasar a Lvl 1. Aparecen Verdes.
-    { level: 0, spawn: COIN_TYPES.GREEN,  coinsToAdvance: 3, advanceCoin: COIN_TYPES.GREEN }, //
-    // Nivel 1 (Verde): Necesitas 3 Azules para pasar a Lvl 2. Aparecen Azules.
-    { level: 1, spawn: COIN_TYPES.BLUE,   coinsToAdvance: 3, advanceCoin: COIN_TYPES.BLUE  }, //
-    // Nivel 2 (Azul): Necesitas 2 Violetas para Lvl 3. Aparecen Violetas.
-    { level: 2, spawn: COIN_TYPES.VIOLET, coinsToAdvance: 2, advanceCoin: COIN_TYPES.VIOLET }, // Menos monedas para avanzar
-    // Nivel 3 (Violeta): Necesitas 2 Amarillas para Lvl 4. Aparecen Amarillas. (Activa PowerUp Dash con moneda VIOLETA)
-    { level: 3, spawn: COIN_TYPES.YELLOW, coinsToAdvance: 2, advanceCoin: COIN_TYPES.YELLOW }, //
-    // Nivel 4 (Amarillo): Necesitas 2 Blancas para Lvl 5. Aparecen Blancas. (Activa PowerUp Doble Salto con moneda AMARILLA)
-    { level: 4, spawn: COIN_TYPES.WHITE,  coinsToAdvance: 2, advanceCoin: COIN_TYPES.WHITE  }, //
-    // Nivel 5 (Blanco): Nivel final. Siempre aparecen Blancas. (Activa PowerUp Combo Aire con moneda BLANCA)
-    { level: 5, spawn: COIN_TYPES.WHITE,  coinsToAdvance: Infinity } //
+    // Nivel 0 (Cian): necesitas 3 Verdes para pasar a Lvl 1. Aparecen Verdes.
+    { level: 0, spawn: COIN_TYPES.GREEN,  coinsToAdvance: 3, advanceCoin: COIN_TYPES.GREEN },
+    // Nivel 1 (Verde): necesitas 3 Azules para pasar a Lvl 2. Aparecen Azules.
+    { level: 1, spawn: COIN_TYPES.BLUE,   coinsToAdvance: 3, advanceCoin: COIN_TYPES.BLUE  },
+    // Nivel 2 (Azul): necesitas 2 Amarillas para Lvl 3. Aparecen Amarillas. (Desbloquea DOBLE SALTO)
+    { level: 2, spawn: COIN_TYPES.YELLOW, coinsToAdvance: 2, advanceCoin: COIN_TYPES.YELLOW },
+    // Nivel 3 (Amarillo): necesitas 2 Violetas para Lvl 4. Aparecen Violetas. (Desbloquea DASH)
+    { level: 3, spawn: COIN_TYPES.VIOLET, coinsToAdvance: 2, advanceCoin: COIN_TYPES.VIOLET },
+    // Nivel 4 (Violeta): necesitas 2 Blancas para Lvl 5. Aparecen Blancas. (Desbloquea DASH AÉREO con Espacio)
+    { level: 4, spawn: COIN_TYPES.WHITE,  coinsToAdvance: 2, advanceCoin: COIN_TYPES.WHITE  },
+    // Nivel 5 (Blanco): nivel final. Siempre aparecen Blancas.
+    { level: 5, spawn: COIN_TYPES.WHITE,  coinsToAdvance: Infinity }
   ];
   
   /* ---------- Bonus de tiempo por tipo de moneda ---------- */

@@ -25,6 +25,7 @@ let playerY = 0;
 let velocityY = 0;
 let playerIsAirborne = false;
 let doubleJumpAvailable = true; // Indica si el próximo salto en el aire puede ser un doble salto
+let jumpPressCount = 0;         // Rastrea las pulsaciones consecutivas de salto
 let isDashing = false;          // << NUEVO: Flag para el estado de Dash
 
 /** Inicializa o resetea el estado del jugador para una nueva partida. */
@@ -33,6 +34,7 @@ export function initPlayerState() {
     velocityY = 0;
     playerIsAirborne = false;
     doubleJumpAvailable = true; // Siempre disponible al tocar el suelo
+    jumpPressCount = 0;        // Reiniciar contador de pulsaciones de salto
     isDashing = false;          // << NUEVO: Resetear estado de Dash
     if (player) {
         player.style.bottom = `${playerY}px`;
@@ -62,6 +64,7 @@ export function updatePlayerPhysics(deltaTime) {
         if (playerIsAirborne) {
              playerIsAirborne = false;
              doubleJumpAvailable = true; // Doble salto se resetea al tocar el suelo
+             jumpPressCount = 0;        // Reiniciar contador al aterrizar
         }
     }
     player.style.bottom = `${playerY}px`;
@@ -94,6 +97,7 @@ export function jump(isGameRunning) { // currentCombo se leerá de state.js
         // doubleJumpAvailable ya es true por estar en el suelo
         velocityY = currentJumpVelocity;
         player.classList.add('jumping');
+        jumpPressCount = 1;
         setTimeout(() => { player?.classList.remove('jumping'); }, JUMP_EFFECT_DURATION_MS);
     } else if (playerIsAirborne && doubleJumpAvailable && state.hasPowerUp(COIN_TYPES.YELLOW)) { // Doble Salto (Power-Up)
         // audioManager.playSound(config.SOUND_DOUBLE_JUMP_PATH);
@@ -102,16 +106,21 @@ export function jump(isGameRunning) { // currentCombo se leerá de state.js
         doubleJumpAvailable = false; // Se consumió el doble salto (power-up) o el único permitido en aire
         player.classList.remove('jumping'); // Quitar y re-aplicar para reiniciar animación si es necesario
         player.classList.add('jumping');
+        jumpPressCount = 2;
         setTimeout(() => { player?.classList.remove('jumping'); }, JUMP_EFFECT_DURATION_MS);
+    } else if (playerIsAirborne && !doubleJumpAvailable && state.hasPowerUp(COIN_TYPES.WHITE) && jumpPressCount === 2) {
+        // Tercer salto con power-up blanco: activa Dash en el aire
+        activateDash(COIN_TYPES.WHITE);
+        jumpPressCount = 3;
     }
 }
 
 /** Activa el Power-Up de Dash. */
-export function activateDash() {
-    if (isDashing || !state.isGameRunning() || !state.hasPowerUp(COIN_TYPES.VIOLET)) return;
+export function activateDash(powerUpType = COIN_TYPES.VIOLET) {
+    if (isDashing || !state.isGameRunning() || !state.hasPowerUp(powerUpType)) return;
 
     // audioManager.playSound(config.SOUND_DASH_PATH);
-    state.consumePowerUp(COIN_TYPES.VIOLET);
+    state.consumePowerUp(powerUpType);
     isDashing = true;
     const dashEndTime = Date.now() + DASH_DURATION_S * 1000;
     state.setPlayerDashingState(true, dashEndTime); // Informar a state.js para que gameLoop pueda ajustar la velocidad
