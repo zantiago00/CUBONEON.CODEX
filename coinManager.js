@@ -138,6 +138,7 @@ function _createCoinElement(type, bonus) {
     if (!container) return null; //
     const element = document.createElement('div');
     element.className = `coin ${type}`; // El CSS usará este string directamente
+    element.classList.add('firefly');
 
     const containerWidth = container.offsetWidth; //
     element.style.left = `${containerWidth + (Math.random() * (containerWidth * 0.1))}px`;
@@ -149,5 +150,5 @@ function _createCoinElement(type, bonus) {
     const randomBottom = safeBottomMin + Math.random() * (safeBottomMax - safeBottomMin);
     element.style.bottom = `${randomBottom}px`;
 
-    return { element, type: type, bonus, width: 0, height: 0 }; // width/height se obtendrán dinámicamente
+    return { element, type: type, bonus, width: 0, height: 0, y: randomBottom };
 }

@@ -302,6 +302,13 @@
   .coin.violeta { background: var(--color-coin-violet); box-shadow: 0 0 12px var(--color-coin-violet), 0 0 5px var(--color-text-light) inset; }
   .coin.amarilla { background: var(--color-coin-amarilla); box-shadow: 0 0 12px var(--color-coin-amarilla), 0 0 5px var(--color-text-light) inset; }
   .coin.blanca { background: var(--color-coin-blanca); box-shadow: 0 0 12px var(--color-coin-blanca), 0 0 8px var(--color-shadow-cyan) inset; color: #333; }
+  .coin.firefly { animation: firefly-glow 1.2s infinite alternate; }
+
+  @keyframes firefly-glow {
+    0% { transform: translateY(0); filter: brightness(1); }
+    50% { transform: translateY(-4px); filter: brightness(1.6); }
+    100% { transform: translateY(0); filter: brightness(1); }
+  }
   
   /* --- Interfaz de Usuario (Score, Timer, Combo) --- */
   #score, #timer, #combo {

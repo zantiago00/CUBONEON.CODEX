@@ -13,8 +13,7 @@ import {
     COIN_TYPES,             // << IMPORTADO
     DASH_DURATION_S,        // << IMPORTADO
     // DASH_SPEED_BONUS,    // << Se usará indirectamente a través del estado
-    DASH_INVULNERABLE,      // << IMPORTADO
-    AIR_COMBO_RESETS_DOUBLE_JUMP // << IMPORTADO
+    DASH_INVULNERABLE      // << IMPORTADO
 } from './config.js';
 // Importar el módulo de estado completo
 import * as state from './state.js';
@@ -38,7 +37,7 @@ export function initPlayerState() {
     isDashing = false;          // << NUEVO: Resetear estado de Dash
     if (player) {
         player.style.bottom = `${playerY}px`;
-        player.classList.remove('jumping', 'collected', 'dashing', 'air-combo-active'); // Limpiar todas las clases de estado
+        player.classList.remove('jumping', 'collected', 'dashing'); // Limpiar todas las clases de estado
     }
 }
 
@@ -87,7 +86,7 @@ export function jump(isGameRunning) { // currentCombo se leerá de state.js
 
     const levelIndex = Math.min(currentLevel, LEVEL_JUMP_MULTIPLIERS.length - 1);
     const levelJumpMultiplier = LEVEL_JUMP_MULTIPLIERS[levelIndex] ?? 1.0;
-    const baseJumpVelocity = INITIAL_JUMP_VELOCITY * levelJumpMultiplier;
+    const baseJumpVelocity = INITIAL_JUMP_VELOCITY * levelJumpMultiplier + state.getJumpVelocityBonus();
     const comboJumpMultiplier = (currentCombo >= 3) ? JUMP_COMBO_MULTIPLIER : 1;
     const currentJumpVelocity = baseJumpVelocity * comboJumpMultiplier;
 
@@ -99,28 +98,30 @@ export function jump(isGameRunning) { // currentCombo se leerá de state.js
         player.classList.add('jumping');
         jumpPressCount = 1;
         setTimeout(() => { player?.classList.remove('jumping'); }, JUMP_EFFECT_DURATION_MS);
-    } else if (playerIsAirborne && doubleJumpAvailable && state.hasPowerUp(COIN_TYPES.YELLOW)) { // Doble Salto (Power-Up)
-        // audioManager.playSound(config.SOUND_DOUBLE_JUMP_PATH);
+    } else if (playerIsAirborne && state.isUnlimitedMode()) {
+        velocityY = currentJumpVelocity * DOUBLE_JUMP_VELOCITY_MULTIPLIER;
+        player.classList.remove('jumping');
+        player.classList.add('jumping');
+        jumpPressCount += 1;
+        setTimeout(() => { player?.classList.remove('jumping'); }, JUMP_EFFECT_DURATION_MS);
+    } else if (playerIsAirborne && doubleJumpAvailable && state.hasPowerUp(COIN_TYPES.YELLOW)) {
         velocityY = currentJumpVelocity * DOUBLE_JUMP_VELOCITY_MULTIPLIER;
         state.consumePowerUp(COIN_TYPES.YELLOW);
-        doubleJumpAvailable = false; // Se consumió el doble salto (power-up) o el único permitido en aire
-        player.classList.remove('jumping'); // Quitar y re-aplicar para reiniciar animación si es necesario
+        doubleJumpAvailable = false;
+        player.classList.remove('jumping');
         player.classList.add('jumping');
         jumpPressCount = 2;
         setTimeout(() => { player?.classList.remove('jumping'); }, JUMP_EFFECT_DURATION_MS);
-    } else if (playerIsAirborne && !doubleJumpAvailable && state.hasPowerUp(COIN_TYPES.WHITE) && jumpPressCount === 2) {
-        // Tercer salto con power-up blanco: activa Dash en el aire
-        activateDash(COIN_TYPES.WHITE);
-        jumpPressCount = 3;
     }
 }
 
 /** Activa el Power-Up de Dash. */
 export function activateDash(powerUpType = COIN_TYPES.VIOLET) {
-    if (isDashing || !state.isGameRunning() || !state.hasPowerUp(powerUpType)) return;
+    if (isDashing || !state.isGameRunning()) return;
+    if (!state.isUnlimitedMode() && !state.hasPowerUp(powerUpType)) return;
 
     // audioManager.playSound(config.SOUND_DASH_PATH);
-    state.consumePowerUp(powerUpType);
+    if (!state.isUnlimitedMode()) state.consumePowerUp(powerUpType);
     isDashing = true;
     const dashEndTime = Date.now() + DASH_DURATION_S * 1000;
     state.setPlayerDashingState(true, dashEndTime); // Informar a state.js para que gameLoop pueda ajustar la velocidad
@@ -137,21 +138,6 @@ export function activateDash(powerUpType = COIN_TYPES.VIOLET) {
 }
 
 /** Activa el Power-Up de Combo Aéreo (ej: resetea doble salto). */
-export function activateAirCombo() {
-    if (!playerIsAirborne || !state.isGameRunning() || !state.hasPowerUp(COIN_TYPES.WHITE)) return;
-
-    // audioManager.playSound(config.SOUND_AIR_COMBO_PATH);
-    state.consumePowerUp(COIN_TYPES.WHITE);
-
-    if (AIR_COMBO_RESETS_DOUBLE_JUMP) {
-        doubleJumpAvailable = true; // Permite otro doble salto o el primero si ya se gastó el normal
-        console.log("PlayerController: Combo Aéreo activado (doble salto reseteado/disponible).");
-    }
-    // Aquí iría otra lógica si el combo aéreo hace algo más.
-
-    player?.classList.add('air-combo-active');
-    setTimeout(() => player?.classList.remove('air-combo-active'), 300); // Efecto visual corto
-}
 
 
 /** Devuelve la posición Y actual del jugador (px desde abajo). */

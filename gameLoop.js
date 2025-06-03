@@ -10,7 +10,7 @@ import {
     SPEED_MULTIPLIER_COMBO3, SPEED_MULTIPLIER_COMBO6,
     SPEED_BOOST_MULTIPLIER, SPEED_BOOST_DURATION_S,
     COIN_SCORE_MULTIPLIER, POINTS_PER_OBSTACLE_DODGED, // << NUEVO: POINTS_PER_OBSTACLE_DODGED
-    DASH_SPEED_BONUS // << NUEVO: Para el efecto del dash en la velocidad
+    DASH_SPEED_BONUS, GROUND_Y, COIN_DESCENT_SPEED // nuevas constantes
   } from './config.js'; //
   
   import { container } from './domRefs.js'; //
@@ -104,7 +104,7 @@ import {
     _updateSpeed(timestamp);
     playerController.updatePlayerPhysics(deltaTime); //
     _moveElements(obstacleManager.getObstacles(), deltaTime); //
-    _moveElements(coinManager.getCoins(), deltaTime); //
+    _moveCoins(coinManager.getCoins(), deltaTime); //
     
     const {outOfBoundsObstacles} = _checkOutOfBounds(); // << MODIFICADO: obtener obstáculos que salieron
   
@@ -172,12 +172,19 @@ import {
   
       if (r.coinsCollectedData && r.coinsCollectedData.length > 0) {
           r.coinsCollectedData.forEach(coin => {
-              state.addCoin(coin.type); //
-              // Otorgar Power-Up si la moneda recogida es del tipo correcto
-              if (coin.type === COIN_TYPES.VIOLET) state.grantPowerUp(COIN_TYPES.VIOLET); //
-              else if (coin.type === COIN_TYPES.YELLOW) state.grantPowerUp(COIN_TYPES.YELLOW); //
-              else if (coin.type === COIN_TYPES.WHITE) state.grantPowerUp(COIN_TYPES.WHITE); //
-              // Reproducir sonido de moneda específica
+              state.addCoin(coin.type);
+              if (coin.type === COIN_TYPES.GREEN) {
+                  state.incrementPermanentSpeedBonus();
+              } else if (coin.type === COIN_TYPES.BLUE) {
+                  state.incrementJumpVelocityBonus();
+              } else if (coin.type === COIN_TYPES.YELLOW) {
+                  state.grantPowerUp(COIN_TYPES.YELLOW);
+              } else if (coin.type === COIN_TYPES.VIOLET) {
+                  state.grantPowerUp(COIN_TYPES.VIOLET);
+                  state.grantPowerUp(COIN_TYPES.YELLOW);
+              } else if (coin.type === COIN_TYPES.WHITE) {
+                  state.enableUnlimitedMode();
+              }
               // audioManager.playSound(`coin${coin.type.charAt(0).toUpperCase() + coin.type.slice(1)}`);
           });
           _checkAndAdvanceLevel();
@@ -220,7 +227,8 @@ import {
     
     // Si el Dash es un aumento FIJO de velocidad (ej. +800px/s) en lugar de un multiplicador:
     const dashBonus = state.isPlayerDashing() ? DASH_SPEED_BONUS : 0; //
-    currentSpeed = (BASE_SPEED * levelMul * comboMul * boostMul) + dashBonus; //
+    const base = BASE_SPEED + state.getPermanentSpeedBonus();
+    currentSpeed = (base * levelMul * comboMul * boostMul) + dashBonus; //
     // Si el Dash fuera un multiplicador, sería: * (state.isPlayerDashing() ? DASH_SPEED_MULTIPLIER_CONFIG : 1);
   }
   
@@ -231,6 +239,21 @@ import {
       if (item.element?.isConnected) {
           const currentLeft = parseFloat(item.element.style.left || '0');
           item.element.style.left = `${currentLeft - dx}px`;
+      }
+    });
+  }
+
+  function _moveCoins(coins, dt) {
+    if (!coins || coins.length === 0) return;
+    const dx = currentSpeed * dt;
+    coins.forEach(coin => {
+      if (coin.element?.isConnected) {
+          const currentLeft = parseFloat(coin.element.style.left || '0');
+          coin.element.style.left = `${currentLeft - dx}px`;
+          if (typeof coin.y === 'number') {
+            coin.y = Math.max(GROUND_Y, coin.y - COIN_DESCENT_SPEED * dt);
+            coin.element.style.bottom = `${coin.y}px`;
+          }
       }
     });
   }

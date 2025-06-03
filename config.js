@@ -126,3 +126,9 @@ export const COIN_TYPES = Object.freeze({
   
   export const MUSIC_BACKGROUND_PATH = './assets/music/theme.mp3';
   export const MUSIC_MENU_PATH = './assets/music/menu_theme.mp3';
+
+/* ---------- Nuevas constantes para monedas reconfiguradas ---------- */
+export const GREEN_SPEED_INCREMENT = 20;       // Aumento permanente de velocidad por moneda verde
+export const BLUE_JUMP_INCREMENT  = 50;        // Aumento permanente de impulso de salto por moneda azul
+export const COIN_DESCENT_SPEED   = 30;        // Velocidad de descenso de las monedas (px/s)
+export const WHITE_OBSTACLE_RATE_MOD = 0.7;    // Multiplicador de aparición de obstáculos tras moneda blanca

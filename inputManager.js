@@ -34,21 +34,10 @@ export function initInputListeners() {
             e.preventDefault();
             playerController.jump(gameIsRunning); //
         }
-        // Activar Dash con tecla 'D'
-        else if (gameIsRunning && (e.code === 'KeyD' || e.key === 'd')) {
+        // Activar Dash con tecla 'C'
+        else if (gameIsRunning && (e.code === 'KeyC' || e.key === 'c')) {
             e.preventDefault();
-            if (state.hasPowerUp(COIN_TYPES.VIOLET)) {
-                playerController.activateDash(COIN_TYPES.VIOLET);
-            } else if (state.hasPowerUp(COIN_TYPES.WHITE)) {
-                playerController.activateDash(COIN_TYPES.WHITE);
-            }
-        }
-        // Activar Combo Aéreo con tecla 'C' (ejemplo)
-        else if (gameIsRunning && playerController.isPlayerAirborneState() && (e.code === 'KeyC' || e.key === 'c')) { //
-            e.preventDefault();
-            if (state.hasPowerUp(COIN_TYPES.WHITE)) { //
-                playerController.activateAirCombo(); //
-            }
+            playerController.activateDash(COIN_TYPES.VIOLET);
         }
         // Iniciar juego con Enter/Espacio desde StartScreen
         else if (!gameIsEffectivelyRunning && dom.startScreen && !dom.startScreen.classList.contains('screen--hidden') && (e.key === 'Enter' || e.keyCode === 13 || e.code === 'Space' || e.key === ' ' || e.keyCode === 32)) { //
