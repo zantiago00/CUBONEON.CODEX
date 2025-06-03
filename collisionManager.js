@@ -15,8 +15,7 @@ import {
   COIN_TYPES, //
   DASH_INVULNERABLE //
 } from './config.js';
-// import * as audioManager from './audioManager.js'; // Descomentar cuando exista
-// import { SOUND_HIT_OBSTACLE_PATH, SOUND_COIN_GREEN_PATH, ... } from './config.js'; // Para sonidos
+import * as audioManager from './audioManager.js';
 
 // --- Funciones Internas Auxiliares ---
 
@@ -104,8 +103,7 @@ export function checkAllCollisions(currentCombo) {
     if (_checkCollision(playerRect, obstacleRect, -10)) { // Margen negativo para colisión más precisa
       if (playerIsCurrentlyInvulnerable) {
         if (DASH_INVULNERABLE) { // Si el Dash configurado destruye obstáculos
-            // console.log("Obstáculo evadido/destruido por invulnerabilidad (Dash)!");
-            // audioManager.playSound('dashDestroyObstacle'); // Sonido específico
+            audioManager.playSound('dash');
             obs.element.remove();
             obstaclesToRemove.push(obs.element);
             // Opcional: Dar puntos por destruir obstáculos con Dash
@@ -115,7 +113,7 @@ export function checkAllCollisions(currentCombo) {
         // la colisión simplemente se ignoraría sin destruir el obstáculo ni penalizar.
       } else {
         // Colisión normal con obstáculo
-        // audioManager.playSound(SOUND_HIT_OBSTACLE_PATH);
+        audioManager.playSound('hitObstacle');
         _handleObstacleHitVisuals(obs.element);
         changes.timeDelta -= OBSTACLE_HIT_PENALTY_S; //
         changes.comboDelta = 'reset';
@@ -136,11 +134,8 @@ export function checkAllCollisions(currentCombo) {
       const coinRect = coin.element.getBoundingClientRect();
       if (_checkCollision(playerRect, coinRect, 5)) { // Margen positivo para facilitar recolección
         // Determinar el nombre del sonido de la moneda basado en coin.type
-        // let coinSoundName = `coin${coin.type.charAt(0).toUpperCase() + coin.type.slice(1)}`; // ej: coinGreen, coinBlue
-        // if(coin.type === COIN_TYPES.YELLOW) coinSoundName = 'coinYellow'; // Casos especiales si nombres no coinciden
-        // else if(coin.type === COIN_TYPES.VIOLET) coinSoundName = 'coinViolet';
-        // else if(coin.type === COIN_TYPES.WHITE) coinSoundName = 'coinWhite';
-        // audioManager.playSound(coinSoundName);
+        const coinSoundName = `coin${coin.type.charAt(0).toUpperCase() + coin.type.slice(1)}`;
+        audioManager.playSound(coinSoundName);
 
         _handleCoinCollectVisuals(coin.element, coin);
         

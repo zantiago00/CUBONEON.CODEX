@@ -5,6 +5,8 @@
 /* ---------- Importaciones ---------- */
 import { COIN_TYPES, GREEN_SPEED_INCREMENT, BLUE_JUMP_INCREMENT, WHITE_OBSTACLE_RATE_MOD } from './config.js';
 
+const MODO_DEPURACION = false;
+
 /* ---------- Variables de estado internas ---------- */
 
 // Estado del Juego
@@ -69,12 +71,39 @@ function _dispatchAnalytics(eventName, detail) {
     }
 }
 
+/**
+ * Guarda un valor en localStorage atrapando posibles errores.
+ * @param {string} clave - Llave donde se almacenará el valor.
+ * @param {string} valor - Valor a almacenar.
+ */
+function _guardarEnLocalStorage(clave, valor) {
+    try {
+        localStorage.setItem(clave, valor);
+    } catch (e) {
+        console.warn(`No se pudo guardar ${clave} en localStorage.`);
+    }
+}
+
+/**
+ * Lee un valor desde localStorage de manera segura.
+ * @param {string} clave - Llave a consultar.
+ * @returns {string|null} Valor almacenado o null si falla.
+ */
+function _leerDeLocalStorage(clave) {
+    try {
+        return localStorage.getItem(clave);
+    } catch (e) {
+        console.warn(`No se pudo cargar ${clave} desde localStorage.`);
+        return null;
+    }
+}
+
 /* --- API pública para gestionar Power-Ups --- */
 export function grantPowerUp(type) {
   if (powerUps.hasOwnProperty(type)) {
     if (powerUps[type].count === 0) { // Solo otorga si no tiene uno ya (o ajusta si pueden acumularse)
        powerUps[type].count = 1;
-       console.log(`State: Power-Up '${type}' otorgado (1 uso).`);
+       if (MODO_DEPURACION) console.log(`State: Power-Up '${type}' otorgado (1 uso).`);
        _dispatchAnalytics('grantPowerUp', { type }); //
        // Aquí se podría llamar a un sonido de "power-up obtenido"
        // import { audioManager } from './audioManager.js'; // Cuidado con dependencias circulares si audioManager importa state
@@ -88,7 +117,7 @@ export function grantPowerUp(type) {
 export function consumePowerUp(type) {
   if (powerUps.hasOwnProperty(type) && powerUps[type].count > 0) {
     powerUps[type].count--; // Decrementa, podría ser > 0 si se acumulan
-    console.log(`State: Power-Up '${type}' consumido. Restantes: ${powerUps[type].count}`);
+    if (MODO_DEPURACION) console.log(`State: Power-Up '${type}' consumido. Restantes: ${powerUps[type].count}`);
     _dispatchAnalytics('consumePowerUp', { type }); //
   }
 } //
@@ -104,7 +133,7 @@ export function resetAllPowerUps() {
       powerUps[key].count = 0;
   });
   if (changed) {
-      console.log("State: Todos los power-ups reseteados a 0 usos.");
+      if (MODO_DEPURACION) console.log("State: Todos los power-ups reseteados a 0 usos.");
       _dispatchAnalytics('resetPowerUps', {}); //
   }
 } //
@@ -141,19 +170,19 @@ export function setGameRunning(isRunning) {
     if (gameRunning !== isRunning) {
         gameRunning = isRunning;
         if (!isRunning) gamePaused = false; // Si el juego se detiene, no puede estar pausado
-        console.log(`State: gameRunning = ${gameRunning}`);
+        if (MODO_DEPURACION) console.log(`State: gameRunning = ${gameRunning}`);
     }
 }
 
 export function setGamePaused(isPaused) {
     if (!gameRunning && isPaused) { // No se puede pausar si el juego no está corriendo
-        console.log("State: Intento de pausar un juego no iniciado.");
+        if (MODO_DEPURACION) console.log("State: Intento de pausar un juego no iniciado.");
         if(gamePaused) gamePaused = false; // Asegurar que el estado de pausa sea falso
         return;
     }
     if (gamePaused !== isPaused) {
         gamePaused = isPaused;
-        console.log(`State: gamePaused = ${gamePaused}`);
+        if (MODO_DEPURACION) console.log(`State: gamePaused = ${gamePaused}`);
     }
 }
 
@@ -163,12 +192,12 @@ export const setGameTime = time    => (gameTime = Math.max(0, time));
 
 export function incrementScore(amount)   { score += amount; }
 export function incrementCombo()         { combo++; /* console.log(`State: combo = ${combo}`); */ } // Log menos verboso
-export function resetCombo()             { if (combo > 0) { console.log(`State: combo reset (${combo} → 0)`); combo = 0; } }
+export function resetCombo()             { if (combo > 0) { if (MODO_DEPURACION) console.log(`State: combo reset (${combo} → 0)`); combo = 0; } }
 
 export function setLevel(level) {
   if (currentLevel !== level) {
     currentLevel = level;
-    console.log(`State: currentLevel = ${currentLevel}`);
+    if (MODO_DEPURACION) console.log(`State: currentLevel = ${currentLevel}`);
     _dispatchAnalytics('levelChange', { level: currentLevel }); //
   }
 }
@@ -189,7 +218,7 @@ export function resetCoinCount(type = null) {
         if(coinsCollected[key] > 0) changed = true;
         coinsCollected[key] = 0;
     });
-    if (changed) console.log('State: Todos los contadores de monedas reseteados.');
+    if (changed && MODO_DEPURACION) console.log('State: Todos los contadores de monedas reseteados.');
   } else if (coinsCollected.hasOwnProperty(type)) {
     if (coinsCollected[type] > 0) {
         // console.log(`State: Contador de ${type} reseteado (${coinsCollected[type]} → 0).`); // Log menos verboso
@@ -203,14 +232,14 @@ export function resetCoinCount(type = null) {
 export function setPlayerInfo(name, email) {
   playerName  = (String(name).trim() || 'Anónimo'); // Asegurar que sea string y quitar espacios
   playerEmail = String(email).trim().toLowerCase(); // Asegurar que sea string, quitar espacios y normalizar
-  console.log(`State: Player = ${playerName}, Email = ${playerEmail}`);
+  if (MODO_DEPURACION) console.log(`State: Player = ${playerName}, Email = ${playerEmail}`);
 }
 
 export function setBoostActive(isActive, endTime = 0) {
   const now = Date.now();
   if (isActive && endTime > now) {
       if (!speedBoostActive) {
-         console.log(`State: boost ON hasta ${new Date(endTime).toLocaleTimeString()}`);
+         if (MODO_DEPURACION) console.log(`State: boost ON hasta ${new Date(endTime).toLocaleTimeString()}`);
          _dispatchAnalytics('boostStart', { duration: endTime - now }); //
       }
       speedBoostActive = true;
@@ -219,7 +248,7 @@ export function setBoostActive(isActive, endTime = 0) {
     if (speedBoostActive) { // Solo desactivar y loguear si estaba activo
         speedBoostActive = false;
         boostEndTime     = 0;
-        console.log('State: boost OFF');
+        if (MODO_DEPURACION) console.log('State: boost OFF');
         _dispatchAnalytics('boostEnd', {}); //
     }
   }
@@ -230,7 +259,7 @@ export function setPlayerDashingState(isDashing, endTime = 0) {
     const now = Date.now();
     if (isDashing && endTime > now) {
         if (!playerDashing) {
-            console.log(`State: Player Dashing ON hasta ${new Date(endTime).toLocaleTimeString()}`);
+            if (MODO_DEPURACION) console.log(`State: Player Dashing ON hasta ${new Date(endTime).toLocaleTimeString()}`);
             _dispatchAnalytics('dashStart', { duration: endTime - now });
         }
         playerDashing = true;
@@ -239,7 +268,7 @@ export function setPlayerDashingState(isDashing, endTime = 0) {
         if (playerDashing) { // Solo desactivar y loguear si estaba activo
             playerDashing = false;
             dashEffectEndTime = 0;
-            console.log('State: Player Dashing OFF');
+            if (MODO_DEPURACION) console.log('State: Player Dashing OFF');
             _dispatchAnalytics('dashEnd', {});
         }
     }
@@ -248,13 +277,8 @@ export function setPlayerDashingState(isDashing, endTime = 0) {
 // NUEVO: Setter para el estado del sonido
 export function toggleSoundMuted() {
     soundMuted = !soundMuted;
-    console.log(`State: soundMuted = ${soundMuted}`);
-    // Guardar preferencia en localStorage (opcional)
-    try {
-        localStorage.setItem('cuboneonSoundMuted', soundMuted.toString());
-    } catch (e) {
-        console.warn("No se pudo guardar el estado de sonido en localStorage.");
-    }
+    if (MODO_DEPURACION) console.log(`State: soundMuted = ${soundMuted}`);
+    _guardarEnLocalStorage('cuboneonSoundMuted', soundMuted.toString());
     _dispatchAnalytics('soundToggle', { muted: soundMuted });
     return soundMuted; // Devolver el nuevo estado
 }
@@ -300,14 +324,11 @@ export function initializeState(initialTime) {
   resetBonuses();
 
   // Cargar preferencia de sonido desde localStorage al inicializar (opcional)
-  try {
-    const storedMuteState = localStorage.getItem('cuboneonSoundMuted');
-    if (storedMuteState !== null) {
-        soundMuted = (storedMuteState === 'true');
-    }
-  } catch (e) {
-    console.warn("No se pudo cargar el estado de sonido desde localStorage.");
-    soundMuted = false; // Default a no muteado si hay error o no existe
+  const storedMuteState = _leerDeLocalStorage('cuboneonSoundMuted');
+  if (storedMuteState !== null) {
+      soundMuted = (storedMuteState === 'true');
+  } else {
+      soundMuted = false; // Default a no muteado si hay error o no existe
   }
-  console.log(`State: Estado inicializado para nueva partida. Sonido muteado: ${soundMuted}`);
+  if (MODO_DEPURACION) console.log(`State: Estado inicializado para nueva partida. Sonido muteado: ${soundMuted}`);
 }

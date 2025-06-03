@@ -189,19 +189,13 @@ export function updateSoundButtonVisuals(isMuted) {
  * Ajusta elementos de UI basados en tamaño/orientación, principalmente el mensaje de orientación.
  */
 export function adjustGameContainer() {
-    if (isMobileDevice()) { //
-        const isPortrait = window.innerHeight > window.innerWidth;
-        setElementVisibility(dom.orientationMessage, isPortrait); //
-        if (dom.orientationMessage) { //
-            dom.orientationMessage.setAttribute('aria-hidden', String(!isPortrait)); //
-        }
-    } else {
-        setElementVisibility(dom.orientationMessage, false); //
-        if (dom.orientationMessage) { //
-            dom.orientationMessage.setAttribute('aria-hidden', 'true'); //
-        }
+    const esRetrato = window.innerHeight > window.innerWidth;
+    const mostrarOrientacion = isMobileDevice() && esRetrato;
+    setElementVisibility(dom.orientationMessage, mostrarOrientacion);
+    if (dom.orientationMessage) {
+        dom.orientationMessage.setAttribute('aria-hidden', String(!mostrarOrientacion));
     }
-    setElementVisibility(dom.mobileInstructions, isMobileDevice()); //
+    setElementVisibility(dom.mobileInstructions, isMobileDevice());
 }
 
 /**

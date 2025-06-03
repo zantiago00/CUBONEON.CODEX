@@ -30,7 +30,7 @@ export function initInputListeners() {
         const gameIsPaused = state.isPaused(); //
 
         // Saltar con Espacio durante el juego
-        if (gameIsRunning && (e.code === 'Space' || e.key === ' ' || e.keyCode === 32)) {
+        if (gameIsRunning && (e.code === 'Space' || e.key === ' ')) {
             e.preventDefault();
             playerController.jump(gameIsRunning); //
         }
@@ -40,27 +40,27 @@ export function initInputListeners() {
             playerController.activateDash(COIN_TYPES.VIOLET);
         }
         // Iniciar juego con Enter/Espacio desde StartScreen
-        else if (!gameIsEffectivelyRunning && dom.startScreen && !dom.startScreen.classList.contains('screen--hidden') && (e.key === 'Enter' || e.keyCode === 13 || e.code === 'Space' || e.key === ' ' || e.keyCode === 32)) { //
+        else if (!gameIsEffectivelyRunning && dom.startScreen && !dom.startScreen.classList.contains('screen--hidden') && (e.key === 'Enter' || e.code === 'Space' || e.key === ' ')) { //
             e.preventDefault();
             audioManager.playSound('buttonClick'); // << LLAMADA A AUDIOMANAGER
             console.log("InputManager: Tecla Start/Enter detectada en StartScreen.");
             gameLoop.startGame(); //
         }
         // Reiniciar juego con Enter/Espacio desde RankingScreen
-        else if (!gameIsEffectivelyRunning && dom.rankingDisplayScreen && !dom.rankingDisplayScreen.classList.contains('screen--hidden') && (e.key === 'Enter' || e.keyCode === 13 || e.code === 'Space' || e.key === ' ' || e.keyCode === 32)) { //
+        else if (!gameIsEffectivelyRunning && dom.rankingDisplayScreen && !dom.rankingDisplayScreen.classList.contains('screen--hidden') && (e.key === 'Enter' || e.code === 'Space' || e.key === ' ')) { //
             e.preventDefault();
             audioManager.playSound('buttonClick'); // << LLAMADA A AUDIOMANAGER
             console.log("InputManager: Tecla Start/Enter detectada en RankingScreen.");
             dom.restartButton?.click(); //
         }
         // Aceptar términos con Enter
-        else if (dom.termsModal && dom.termsModal.style.display === 'block' && document.activeElement === dom.acceptTermsBtn && (e.key === 'Enter' || e.keyCode === 13)) { //
+        else if (dom.termsModal && dom.termsModal.style.display === 'block' && document.activeElement === dom.acceptTermsBtn && e.key === 'Enter') { //
              e.preventDefault();
              audioManager.playSound('buttonClick'); // << LLAMADA A AUDIOMANAGER
              uiManager.acceptTerms(); //
         }
          // Cerrar modal con Escape
-        else if (dom.termsModal && dom.termsModal.style.display === 'block' && (e.key === 'Escape' || e.keyCode === 27)) { //
+        else if (dom.termsModal && dom.termsModal.style.display === 'block' && e.key === 'Escape') { //
              uiManager.closeTermsModal(); //
         }
         // Pausa con 'P'
