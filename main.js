@@ -15,11 +15,13 @@ import * as state from './state.js'; //
 import * as audioManager from './audioManager.js'; // << IMPORTADO
 import { WELCOME_TRANSITION_DURATION_MS, RANKING_MAX_NAME_LENGTH } from './config.js'; //
 
+const MODO_DEPURACION = false;
+
 /**
  * Función principal de inicialización.
  */
 function initializeApp() {
-    console.log("Main: Inicializando aplicación CUBONEON ARENA...");
+    if (MODO_DEPURACION) console.log("Main: Inicializando aplicación CUBONEON ARENA...");
     let currentEmail = ''; // Almacena el email entre pantallas
 
     // Inicializar módulos en orden de dependencia
@@ -40,7 +42,7 @@ function initializeApp() {
     // --- Configurar Listeners de UI Específicos de Main ---
     dom.welcomeStartBtn?.addEventListener('click', () => { //
         audioManager.playSound('buttonClick');
-        console.log("Main: Clic en welcomeStartBtn.");
+        if (MODO_DEPURACION) console.log("Main: Clic en welcomeStartBtn.");
         if (dom.welcomeScreen && dom.emailScreen) { //
             dom.welcomeScreen.classList.add('transition-out'); //
             setTimeout(() => {
@@ -59,7 +61,7 @@ function initializeApp() {
         const email = uiManager.handleEmailSubmit(e); //
         if (email) {
             currentEmail = email;
-            console.log("Main: Email recibido:", currentEmail);
+            if (MODO_DEPURACION) console.log("Main: Email recibido:", currentEmail);
         }
     });
 
@@ -133,7 +135,7 @@ function initializeApp() {
         console.error("Promesa rechazada no manejada:", event.reason);
     };
 
-    console.log("Main: Aplicación inicializada y todos los listeners configurados.");
+    if (MODO_DEPURACION) console.log("Main: Aplicación inicializada y todos los listeners configurados.");
 }
 
 // --- Punto de Entrada ---
