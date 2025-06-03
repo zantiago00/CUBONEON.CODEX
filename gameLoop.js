@@ -52,7 +52,7 @@ import {
     uiManager.updatePowerUpHUD(state.getPowerUpsState()); // << NUEVO: Actualizar HUD al inicio
     _updateSpeed(Date.now());
     obstacleManager.scheduleNextObstacle(state.isGameRunning(), currentSpeed, state.getCombo()); //
-    coinManager.scheduleNextCoin(state.isGameRunning(), state.getCombo()); //
+    coinManager.scheduleNextCoin(state.isGameRunning()); //
     // audioManager.playGameMusic(); // Iniciar música del juego
     if (gameLoopId) cancelAnimationFrame(gameLoopId);
     gameLoopId = requestAnimationFrame(_gameLoop);
@@ -74,7 +74,7 @@ import {
     lastTimestamp = 0;
     _updateSpeed(Date.now());
     obstacleManager.scheduleNextObstacle(state.isGameRunning(), currentSpeed, state.getCombo()); //
-    coinManager.scheduleNextCoin(state.isGameRunning(), state.getCombo()); //
+    coinManager.scheduleNextCoin(state.isGameRunning()); //
     // audioManager.resumeMusic(); // Reanudar música
     if (!gameLoopId) {
         gameLoopId = requestAnimationFrame(_gameLoop);

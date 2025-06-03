@@ -34,9 +34,8 @@ export function initCoinManager() {
 /**
  * Programa la aparición de la siguiente moneda.
  * @param {boolean} gameRunning - Si el juego está activo.
- * @param {number} currentCombo - Combo actual (para ajustar frecuencia).
  */
-export function scheduleNextCoin(gameRunning, currentCombo) {
+export function scheduleNextCoin(gameRunning) {
     if (!gameRunning) {
         clearCoinTimeout();
         return;
@@ -46,7 +45,8 @@ export function scheduleNextCoin(gameRunning, currentCombo) {
     const now = Date.now();
     let baseInterval = COIN_BASE_INTERVAL_MS; //
 
-    if (currentCombo >= 6) {
+    const combo = state.getCombo();
+    if (combo >= 6) {
         baseInterval *= COIN_INTERVAL_COMBO6_MULTIPLIER; //
     }
     baseInterval += Math.random() * COIN_INTERVAL_RANDOMNESS_MS; //
@@ -90,7 +90,7 @@ function _spawnAndReschedule(gameRunning) {
     _spawnCoin();
     lastCoinSpawnTime = Date.now();
 
-    scheduleNextCoin(gameRunning, state.getCombo()); //
+    scheduleNextCoin(gameRunning); //
 }
 
 /**
