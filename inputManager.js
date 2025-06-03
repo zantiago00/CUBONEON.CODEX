@@ -32,7 +32,7 @@ export function initInputListeners() {
         // Saltar con Espacio durante el juego
         if (gameIsRunning && (e.code === 'Space' || e.key === ' ')) {
             e.preventDefault();
-            playerController.jump(gameIsRunning); //
+            playerController.manejarPulsacionEspacio(gameIsRunning); //
         }
         // Activar Dash con tecla 'C'
         else if (gameIsRunning && (e.code === 'KeyC' || e.key === 'c')) {
@@ -83,7 +83,7 @@ export function initInputListeners() {
     dom.container?.addEventListener('touchstart', (e) => { //
         const gameIsRunning = state.isGameRunning(); //
         if (gameIsRunning && !e.target.closest('button, a, input, .modal, #powerup-hud .hud-icon')) {
-            playerController.jump(gameIsRunning); //
+            playerController.manejarPulsacionEspacio(gameIsRunning); //
         }
     }, { passive: true });
 
