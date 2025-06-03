@@ -35,7 +35,8 @@ export const COIN_TYPES = Object.freeze({
   export const LEVEL_JUMP_MULTIPLIERS  = [1.0, 1.0,  1.1,  1.1,  1.2,  1.2];  // Ejemplo: Salto mejora en ciertos niveles
   
   /* ---------- Tiempo, puntuación, ranking ---------- */
-  export const INITIAL_TIME_S   = 120; // Tiempo inicial en segundos
+  // Tiempo inicial reducido para partidas más rápidas
+  export const INITIAL_TIME_S   = 30; // Tiempo inicial en segundos
   export const MAX_TIME_CAP_S   = INITIAL_TIME_S + 60; // Límite máximo de tiempo acumulable
   export const OBSTACLE_HIT_PENALTY_S = 1;  // Segundos penalización por golpe
   export const COIN_SCORE_MULTIPLIER  = 5;  // Puntos base por moneda (multiplicado por combo actual)
