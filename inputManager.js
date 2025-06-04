@@ -34,8 +34,11 @@ export function initInputListeners() {
             e.preventDefault();
             playerController.manejarPulsacionEspacio(gameIsRunning); //
         }
-        // Activar Dash con tecla 'C'
-        else if (gameIsRunning && (e.code === 'KeyC' || e.key === 'c')) {
+        // Activar Dash con teclas 'C' o 'D'
+        else if (
+            gameIsRunning &&
+            (e.code === 'KeyC' || e.key === 'c' || e.code === 'KeyD' || e.key === 'd')
+        ) {
             e.preventDefault();
             playerController.activateDash(COIN_TYPES.VIOLET);
         }
