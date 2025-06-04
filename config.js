@@ -65,7 +65,7 @@ export const COIN_TYPES = Object.freeze({
     /* ---------- Configuración de Power-Ups ---------- */
     // Dash (Activado por Moneda Violeta)
     export const DASH_SPEED_BONUS = 800;     // Aumento instantáneo o velocidad fija extra (pixels/s)
-    export const DASH_DURATION_S = 0.25;   // Duración del Dash en segundos
+    export const DASH_DURATION_S = 0.5;    // Duración del Dash en segundos (más prolongado)
     export const DASH_INVULNERABLE = true; // Si el jugador es invulnerable durante el dash
     
     // Combo Aéreo (Activado por Moneda Blanca)
